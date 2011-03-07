@@ -25,8 +25,8 @@ void Block::SetBody( b2BodyDef &bodyDef )
 	b2PolygonShape box;
 	box.SetAsBox( ((float)(BLOCK_DIM))/(2.0f*convF), ((float)(BLOCK_DIM))/(2.0f*convF));
 	fixDef.shape = &box;
-	fixDef.restitution = 0.1f;
-	fixDef.friction = 0.6f;
+	fixDef.restitution = 0.0f;
+	fixDef.friction = 0.7f;
 	fixDef.density = 1;
 	m_bBody->CreateFixture( &fixDef );
 }

@@ -64,6 +64,10 @@ public:
 
 	void Update();
 	void AddForceToBody(b2Vec2& force);
+
+private:
+	// Direzione destra?
+	bool m_bRight;
 };
 
 class RunningState :
@@ -88,8 +92,5 @@ public:
 
 	void Update();
 	void AddForceToBody(b2Vec2& force);
-
-private:
-	bool topReached;
 };
 

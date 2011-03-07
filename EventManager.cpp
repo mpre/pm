@@ -31,11 +31,11 @@ void EventManager::ManageEvent(void)
 	}
 
 	if( m_bPressed[PLAYER1_UP] )
-		players[0]->AddForceToBody(b2Vec2(0,-15));
+		players[0]->AddForceToBody(b2Vec2(0,-500));
 	if( m_bPressed[PLAYER1_DOWN] )
-		players[0]->AddForceToBody(b2Vec2(0,5));
+		players[0]->AddForceToBody(b2Vec2(0,30));
 	if( m_bPressed[PLAYER1_LEFT] )
-		players[0]->AddForceToBody(b2Vec2(-5,0));
+		players[0]->AddForceToBody(b2Vec2(-30,0));
 	if( m_bPressed[PLAYER1_RIGHT] )
-		players[0]->AddForceToBody(b2Vec2(5,0));
+		players[0]->AddForceToBody(b2Vec2(30,0));
 }

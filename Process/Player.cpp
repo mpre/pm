@@ -66,16 +66,20 @@ State::State(Player* p)
 /* Standing state*/
 StandingState::StandingState(Player* p) : State(p)
 {
+	m_bRight = (m_pPlayer->m_bBody->GetLinearVelocity().x >= 0);
+	m_pPlayer->temp_i = (m_bRight) ? 3 : 0;
 }
 
 void StandingState::Update()
 {
 	unsigned int now = SDL_GetTicks();
-	if (now > m_pPlayer->m_tLast_surface_change + 400)
+	if (now > m_pPlayer->m_tLast_surface_change + 250)
 	{
 		m_pPlayer->m_tLast_surface_change = now;
 		m_pPlayer->temp_i += 1;
 		m_pPlayer->temp_i = m_pPlayer->temp_i % 3;
+		if (m_bRight)
+			m_pPlayer->temp_i += 3;
 	}
 
 	SDL_Rect pos;
@@ -94,17 +98,22 @@ void StandingState::Update()
 
 void StandingState::AddForceToBody(b2Vec2& force)
 {
-	//m_pPlayer->temp_i = 0;
-	if( force.y > 0.1 )
+	m_pPlayer->m_bBody->ApplyForce(force, 
+		m_pPlayer->m_bBody->GetWorldCenter());
+	if( abs(force.y) > 0.1 )
 		m_pPlayer->SwitchState(new JumpingState(m_pPlayer));
 	else 
 		m_pPlayer->SwitchState(new RunningState(m_pPlayer));
 }
 
 /* Running state*/
+
+const int MAX_VELOCITY = 15;
+
 RunningState::RunningState(Player* p) : State(p)
 {
-	firstRun == true;
+	m_pPlayer->temp_i = 0;
+	firstRun = true;
 }
 
 void RunningState::Update()
@@ -132,24 +141,33 @@ void RunningState::Update()
 	clip.y = 0;
 
 	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
-	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) == 0.0f && !firstRun)
+
+	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) == 0.0f)
 	{
-		m_pPlayer->temp_i = 1;
 		m_pPlayer->SwitchState(new StandingState(m_pPlayer));
 	}	
 }
 
 void RunningState::AddForceToBody(b2Vec2& force)
 {
-	if( force.y >= 0.1 )
+	if( abs(force.y) >= 0.1 )
 	{
-		m_pPlayer->temp_i = 1;
+		m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
 		m_pPlayer->SwitchState(new JumpingState(m_pPlayer));
 	}
 	else
 	{
-		if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > 5)
+		if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_VELOCITY)
+		{
 			force.x = 0;
+			m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
+			if(m_pPlayer->m_bBody->GetLinearVelocity().x > 0)
+				m_pPlayer->m_bBody->SetLinearVelocity(
+					b2Vec2 (MAX_VELOCITY,m_pPlayer->m_bBody->GetLinearVelocity().y));
+			else
+				m_pPlayer->m_bBody->SetLinearVelocity(
+					b2Vec2 (-MAX_VELOCITY,m_pPlayer->m_bBody->GetLinearVelocity().y));
+		}
 		else
 			m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
 	}
@@ -158,17 +176,19 @@ void RunningState::AddForceToBody(b2Vec2& force)
 /* Jumping state*/
 JumpingState::JumpingState(Player* p) : State(p)
 {
-	topReached = false;
+	 m_pPlayer->temp_i = (m_pPlayer->m_bBody->GetLinearVelocity().x >= 0) ? 3 : 0;
 }
 
 void JumpingState::Update()
 {
 	unsigned int now = SDL_GetTicks();
-	if (now > m_pPlayer->m_tLast_surface_change + 100)
+	if (now > m_pPlayer->m_tLast_surface_change + 500)
 	{
 		m_pPlayer->m_tLast_surface_change = now;
-		++(m_pPlayer->temp_i);
+		m_pPlayer->temp_i += 1;
 		m_pPlayer->temp_i = m_pPlayer->temp_i % 3;
+		if (m_pPlayer->m_bBody->GetLinearVelocity().x >= 0)
+			m_pPlayer->temp_i += 3;
 	}
 
 	SDL_Rect pos;
@@ -180,22 +200,29 @@ void JumpingState::Update()
 	clip.h = BLOCK_DIM;
 
 	clip.x = BLOCK_DIM * m_pPlayer->temp_i;
-	clip.y = 0;
+	clip.y = BLOCK_DIM;
 
 	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
 
-	if( m_pPlayer->m_bBody->GetLinearVelocity().y == 0)
-		if(!topReached)
-			topReached = true;
-		else
-			m_pPlayer->SwitchState(new StandingState(m_pPlayer));
+	bool standing = false;
+	for(b2ContactEdge* contatto = m_pPlayer->m_bBody->GetContactList();
+		contatto; contatto = contatto->next)
+	{
+		if(contatto->contact->GetManifold()->localNormal.y < 0 &&
+			m_pPlayer->m_bBody->GetLinearVelocity().y == 0)
+			standing = true;
+	}
+
+	if(standing)
+	{
+		m_pPlayer->SwitchState(new RunningState(m_pPlayer));
+	}
 }
 
 void JumpingState::AddForceToBody(b2Vec2& force)
 {
-	//if( abs(force.y) >= 0.1 )
 	force.y = 0;
-	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > 2)
+	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_VELOCITY)
 		force.x = 0;
 	m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
 }

@@ -76,14 +76,14 @@ bool InitEnv( void )
 
 	EvMan = new EventManager();
 
-	b2Vec2 gravity(0.0f, 25.0f);
+	b2Vec2 gravity(0.0f, 120.0f);
 	bWorld = new b2World(gravity, true);
 
 
 	// Creo il bordo della finestra
 	for (float i=0; i<=SCREEN_WIDTH; i+=BLOCK_DIM-1)
 	{
-		Block* b = new Block(i, SCREEN_HEIGHT-BLOCK_DIM);
+		Block* b = new Block(i, SCREEN_HEIGHT-BLOCK_DIM-1);
 		b->SetSurface(TERRAIN_TILE);
 		shared_ptr<Block> sb(b);
 		PMan->Attach(sb);
@@ -92,6 +92,15 @@ bool InitEnv( void )
 		shared_ptr<Block> sb2(b);
 		PMan->Attach(sb2);
 	}
+
+	for (float i=0; i<=SCREEN_WIDTH/2; i+=BLOCK_DIM-1)
+	{
+		Block* b = new Block(i,SCREEN_HEIGHT - 75);
+		b->SetSurface(TERRAIN_TILE);
+		shared_ptr<Block> sb(b);
+		PMan->Attach(sb);
+	}
+
 	for (float i=BLOCK_DIM-1; i<=SCREEN_HEIGHT - BLOCK_DIM; i+=BLOCK_DIM-1)
 	{
 		Block* b = new Block(0,i);
@@ -153,7 +162,7 @@ void RunProcess( void )
 		SDL_BlitSurface(background, NULL, screen, NULL);
 		bWorld->Step(1.0f / 60.0f, 10, 8);
 		PMan->Update();
-		SDL_Delay(20);
+		SDL_Delay(5);
 		SDL_Flip(screen);
 	}
 }
