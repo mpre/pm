@@ -1,0 +1,5 @@
+pm è un gioco scritto in c++ utilizzando le librerie SDL e Box2D.
+Il gioco va preso come test personale.
+Sostanzialmente questo è un gioco platform multiplayer nel quale l'obiettivo 
+è raggiungere la fine del tracciato prima dell'avversario cercando di 
+intralciare il suo percorso. 
