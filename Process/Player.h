@@ -51,6 +51,7 @@ public:
 	virtual void AddForceToBody(b2Vec2& force)=0;
 
 protected:
+	static const int MAX_SPEED = 15;
 	Player* m_pPlayer;
 
 };

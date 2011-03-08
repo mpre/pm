@@ -14,6 +14,8 @@ public:
 	void SetSurface(const int surface_index);
 	void SetBody( b2BodyDef &bodyDef );
 
+	b2Body* GetBody(void);
+
 private:
 	Block(void);
 	b2Body* m_bBody;

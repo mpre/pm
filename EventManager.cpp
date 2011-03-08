@@ -1,5 +1,6 @@
 #include "EventManager.h"
 
+extern bool run;
 
 EventManager::EventManager(void)
 {
@@ -38,4 +39,7 @@ void EventManager::ManageEvent(void)
 		players[0]->AddForceToBody(b2Vec2(-30,0));
 	if( m_bPressed[PLAYER1_RIGHT] )
 		players[0]->AddForceToBody(b2Vec2(30,0));
+
+	if( m_bPressed[SDLK_ESCAPE] )
+		run = false;
 }

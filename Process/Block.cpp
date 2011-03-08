@@ -27,10 +27,16 @@ void Block::SetBody( b2BodyDef &bodyDef )
 	fixDef.shape = &box;
 	fixDef.restitution = 0.0f;
 	fixDef.friction = 0.7f;
-	fixDef.density = 1;
+	fixDef.density = 10;
+	// Problema mappe tiled. Questo valore viene filtrato da player
+	fixDef.filter.categoryBits = 0x004;
 	m_bBody->CreateFixture( &fixDef );
 }
 
+b2Body* Block::GetBody(void)
+{
+	return m_bBody;
+}
 
 void Block::Update(void)
 {

@@ -21,6 +21,7 @@ using namespace std;
 bool InitEnv( void );
 void EndEnv( void );
 bool InitProcess( void );
+void InitLevel( void );
 void RunProcess( void );
 void EndProcess( void );
 
@@ -31,7 +32,7 @@ const int SCREEN_BPP = 32;
 
 const short int BLOCK_DIM = 24; // Dimensione di ogni blocco in pixel
 
-const float convF = 50; // Fattore di conversione metri->pixel
+const float convF = 48; // Fattore di conversione metri->pixel
 
 SDL_Surface* screen = NULL;
 b2World* bWorld = NULL;
@@ -79,41 +80,8 @@ bool InitEnv( void )
 	b2Vec2 gravity(0.0f, 120.0f);
 	bWorld = new b2World(gravity, true);
 
-
-	// Creo il bordo della finestra
-	for (float i=0; i<=SCREEN_WIDTH; i+=BLOCK_DIM-1)
-	{
-		Block* b = new Block(i, SCREEN_HEIGHT-BLOCK_DIM-1);
-		b->SetSurface(TERRAIN_TILE);
-		shared_ptr<Block> sb(b);
-		PMan->Attach(sb);
-		b = new Block(i, 0);
-		b->SetSurface(TERRAIN_TILE);
-		shared_ptr<Block> sb2(b);
-		PMan->Attach(sb2);
-	}
-
-	for (float i=0; i<=SCREEN_WIDTH/2; i+=BLOCK_DIM-1)
-	{
-		Block* b = new Block(i,SCREEN_HEIGHT - 75);
-		b->SetSurface(TERRAIN_TILE);
-		shared_ptr<Block> sb(b);
-		PMan->Attach(sb);
-	}
-
-	for (float i=BLOCK_DIM-1; i<=SCREEN_HEIGHT - BLOCK_DIM; i+=BLOCK_DIM-1)
-	{
-		Block* b = new Block(0,i);
-		b->SetSurface(TERRAIN_TILE);
-		shared_ptr<Block> sb(b);
-		PMan->Attach(sb);
-		b = new Block(SCREEN_WIDTH - BLOCK_DIM, i);
-		b->SetSurface(TERRAIN_TILE);
-		shared_ptr<Block> sb2(b);
-		PMan->Attach(sb2);
-	}
-
-
+	InitLevel();
+	
 
 	Player*	x = new Player(8.0f, 12.0f);
 	x->SetSurface(PPLAYER);
@@ -122,7 +90,11 @@ bool InitEnv( void )
 
 	shared_ptr<Player> sp(x);
 
+	
+
 	PMan->Attach(sp);
+
+	
 
 	return true;
 }
@@ -154,13 +126,15 @@ bool InitProcess( void )
 
 void RunProcess( void )
 {
+	ProcessManager* x124=PMan;
+
 	SDL_Surface* background = SDL_LoadBMP("img/background.bmp");
 	while(run)
 	{
 		EvMan->ManageEvent();
 
 		SDL_BlitSurface(background, NULL, screen, NULL);
-		bWorld->Step(1.0f / 60.0f, 10, 8);
+		bWorld->Step(1.0f / 60.0f, 15, 14);
 		PMan->Update();
 		SDL_Delay(5);
 		SDL_Flip(screen);
@@ -169,4 +143,57 @@ void RunProcess( void )
 
 void EndProcess( void )
 {
+}
+
+void InitLevel( void )
+{
+	std::list<Block> block_list;
+
+	// Creo il bordo della finestra
+	for (float i=0; i<=SCREEN_WIDTH; i+=BLOCK_DIM)
+	{
+		Block* b = new Block(i, SCREEN_HEIGHT-BLOCK_DIM-1);
+		b->SetSurface(TERRAIN_TILE);
+		shared_ptr<Block> sb(b);
+		PMan->Attach(sb);
+		block_list.push_back(*b);
+		//boundary.Set(&b->GetBody()->GetFixtureList()->GetAABB().upperBound);
+	}
+
+	b2BodyDef bd;
+	b2Body* ground = bWorld->CreateBody(&bd);
+	b2EdgeShape shape;
+
+	std::list<Block>::iterator i = block_list.begin();
+	std::list<Block>::iterator end = block_list.end();
+	b2Vec2 *v1=NULL,
+		*v2=NULL,
+		*v0=NULL,
+		*v3=NULL;
+
+	while(i!=end)
+	{
+		v0 = v1;
+		v1 = v2;
+		v2 = v3;
+		v3 = new b2Vec2(i->GetBody()->GetFixtureList()->GetAABB(0).lowerBound);
+
+		if(v1 && v2)
+		{
+			shape.Set(*v1, *v2);
+			if(v0)
+			{
+				shape.m_hasVertex0 = true;
+				shape.m_vertex0 = *v0;
+			}
+			if(v3)
+			{
+				shape.m_hasVertex3 = true;
+				shape.m_vertex3 = *v3;
+			}
+			ground->CreateFixture(&shape, 0.0f);
+		}
+
+		++i;
+	}
 }

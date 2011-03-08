@@ -31,6 +31,8 @@ void Player::SetBody( b2BodyDef &bodyDef )
 	m_bBody = bWorld->CreateBody(&bodyDef);
 	b2FixtureDef fixDef;
 	b2PolygonShape box;
+	// Evito di fare collisioni tra player e blocci per il problema delle mappe tiled
+	fixDef.filter.maskBits = 0xFFFF & ~0x0004;
 	box.SetAsBox( ((float)(BLOCK_DIM))/(2.0f*convF), ((float)(BLOCK_DIM))/(2.0f*convF) );
 	fixDef.shape = &box;
 	fixDef.restitution = 0.0f;
@@ -66,14 +68,13 @@ State::State(Player* p)
 /* Standing state*/
 StandingState::StandingState(Player* p) : State(p)
 {
-	m_bRight = (m_pPlayer->m_bBody->GetLinearVelocity().x >= 0);
-	m_pPlayer->temp_i = (m_bRight) ? 3 : 0;
+	m_bRight = (m_pPlayer->temp_i >= 3) ? true : false;
 }
 
 void StandingState::Update()
 {
 	unsigned int now = SDL_GetTicks();
-	if (now > m_pPlayer->m_tLast_surface_change + 250)
+	if (now > m_pPlayer->m_tLast_surface_change + 500)
 	{
 		m_pPlayer->m_tLast_surface_change = now;
 		m_pPlayer->temp_i += 1;
@@ -108,11 +109,8 @@ void StandingState::AddForceToBody(b2Vec2& force)
 
 /* Running state*/
 
-const int MAX_VELOCITY = 15;
-
 RunningState::RunningState(Player* p) : State(p)
 {
-	m_pPlayer->temp_i = 0;
 	firstRun = true;
 }
 
@@ -157,16 +155,16 @@ void RunningState::AddForceToBody(b2Vec2& force)
 	}
 	else
 	{
-		if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_VELOCITY)
+		if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_SPEED)
 		{
 			force.x = 0;
 			m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
 			if(m_pPlayer->m_bBody->GetLinearVelocity().x > 0)
 				m_pPlayer->m_bBody->SetLinearVelocity(
-					b2Vec2 (MAX_VELOCITY,m_pPlayer->m_bBody->GetLinearVelocity().y));
+					b2Vec2 (MAX_SPEED,m_pPlayer->m_bBody->GetLinearVelocity().y));
 			else
 				m_pPlayer->m_bBody->SetLinearVelocity(
-					b2Vec2 (-MAX_VELOCITY,m_pPlayer->m_bBody->GetLinearVelocity().y));
+					b2Vec2 (-MAX_SPEED,m_pPlayer->m_bBody->GetLinearVelocity().y));
 		}
 		else
 			m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
@@ -222,7 +220,12 @@ void JumpingState::Update()
 void JumpingState::AddForceToBody(b2Vec2& force)
 {
 	force.y = 0;
-	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_VELOCITY)
-		force.x = 0;
 	m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
+	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_SPEED)
+	{
+		float v =  m_pPlayer->m_bBody->GetLinearVelocity().x;		
+		m_pPlayer->m_bBody->SetLinearVelocity(
+			b2Vec2 (MAX_SPEED * v / abs(v), 
+			m_pPlayer->m_bBody->GetLinearVelocity().y ));
+	}
 }
