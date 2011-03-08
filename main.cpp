@@ -205,7 +205,7 @@ void InitLevel( void )
 		++i;
 	}
 
-	Spike* s = new Spike(650,600, SPIKE_UP);
+	Spike* s = new Spike(650,600, SPIKE_LEFT);
 	shared_ptr<Spike> ss(s);
 	PMan->Attach(ss);
 }

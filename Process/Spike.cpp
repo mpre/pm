@@ -37,25 +37,25 @@ void Spike::SetBody(b2BodyDef &bodyDef)
 			v1 = b2Vec2(0,-BLOCK_DIM/(2.0f * convF)); 
 			v2 = b2Vec2(BLOCK_DIM/(2.0f * convF),BLOCK_DIM/(2.0f * convF));
 			v3 = b2Vec2(-BLOCK_DIM/(2.0f * convF),BLOCK_DIM/(2.0f * convF));
-			m_sImg = GCache->GetSurface(SPIKE_UP);
+			m_sImg = GCache->GetSurface(PSPIKE_UP);
 			break;
 		case SPIKE_DOWN:
-			v1 = b2Vec2(0,BLOCK_DIM); 
-			v2 = b2Vec2(BLOCK_DIM/2, 0);
-			v3 = b2Vec2(BLOCK_DIM, BLOCK_DIM);
-			m_sImg = GCache->GetSurface(SPIKE_DOWN);
+			v1 = b2Vec2(BLOCK_DIM/(2.0f * convF),BLOCK_DIM/(2.0f * convF)); 
+			v2 = b2Vec2(BLOCK_DIM/(2.0f * convF), -BLOCK_DIM/(2.0f * convF));
+			v3 = b2Vec2(0,BLOCK_DIM/(2.0f * convF));
+			m_sImg = GCache->GetSurface(PSPIKE_DOWN);
 			break;
 		case SPIKE_RIGHT:
-			v1 = b2Vec2(0,0); 
-			v2 = b2Vec2(BLOCK_DIM, BLOCK_DIM/2);
-			v3 = b2Vec2(0, BLOCK_DIM);
-			m_sImg = GCache->GetSurface(SPIKE_RIGHT);
+			v1 = b2Vec2(-BLOCK_DIM/(2.0f * convF),BLOCK_DIM/(2.0f * convF)); 
+			v2 = b2Vec2(-BLOCK_DIM/(2.0f * convF),-BLOCK_DIM/(2.0f * convF));
+			v3 = b2Vec2(BLOCK_DIM/(2.0f * convF), 0);
+			m_sImg = GCache->GetSurface(PSPIKE_RIGHT);
 			break;
 		case SPIKE_LEFT:
-			v1 = b2Vec2(BLOCK_DIM,0); 
-			v2 = b2Vec2(0, BLOCK_DIM/2);
-			v3 = b2Vec2(BLOCK_DIM, BLOCK_DIM);
-			m_sImg = GCache->GetSurface(SPIKE_LEFT);
+			v1 = b2Vec2(-BLOCK_DIM/(2.0f * convF),0); 
+			v2 = b2Vec2(BLOCK_DIM/(2.0f * convF), -BLOCK_DIM/(2.0f * convF));
+			v3 = b2Vec2(BLOCK_DIM/(2.0f * convF), BLOCK_DIM/(2.0f * convF));
+			m_sImg = GCache->GetSurface(PSPIKE_LEFT);
 			break;
 	}
 	b2Vec2 v[3] = {v1,v2,v3};
