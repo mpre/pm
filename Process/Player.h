@@ -25,13 +25,14 @@ public:
 	void SetBody( b2BodyDef &bodyDef );
 
 	void Update( void );
-
 	void AddForceToBody(b2Vec2& force);
+	void Die(void);
 
 	void SwitchState(State*);
 
 protected:
 	Player(void);
+	b2Vec2 initPoint;
 	b2Body* m_bBody;
 	Surface_ptr m_sImg;
 	State* m_sState;

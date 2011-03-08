@@ -6,7 +6,7 @@ Block::Block(float xPosition=0.0f, float yPosition=0.0f) : CProcess()
 	b2BodyDef def;
 	def.type = b2_staticBody;
 	def.position.Set( xPosition/convF, yPosition/convF );
-	def.awake = true;
+	def.awake = false;
 	SetBody(def);
 }
 
@@ -29,8 +29,9 @@ void Block::SetBody( b2BodyDef &bodyDef )
 	fixDef.friction = 0.7f;
 	fixDef.density = 10;
 	// Problema mappe tiled. Questo valore viene filtrato da player
-	fixDef.filter.categoryBits = 0x004;
+	fixDef.filter.categoryBits = 0x0004;
 	m_bBody->CreateFixture( &fixDef );
+	m_bBody->SetUserData(this);
 }
 
 b2Body* Block::GetBody(void)

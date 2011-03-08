@@ -25,6 +25,7 @@ void GameCache::Init(void)
 {
 	loadOptimized( "img/player2.png", PPLAYER );
 	loadOptimized( "img/terrain_tile.png", TERRAIN_TILE );
+	loadOptimized( "img/spike.png", PSPIKE_UP);
 }
 
 bool GameCache::loadOptimized(string path, int position)

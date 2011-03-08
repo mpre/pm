@@ -10,6 +10,7 @@ Player::Player(float xPosition=0.0f, float yPosition=0.0f) : CProcess(), temp_i(
 	def.awake = true;
 	SetBody(def);
 	m_sState = new StandingState(this);
+	initPoint = b2Vec2(xPosition, yPosition);
 }
 
 
@@ -33,11 +34,14 @@ void Player::SetBody( b2BodyDef &bodyDef )
 	b2PolygonShape box;
 	// Evito di fare collisioni tra player e blocci per il problema delle mappe tiled
 	fixDef.filter.maskBits = 0xFFFF & ~0x0004;
+	fixDef.filter.categoryBits = 0x0002;
+
 	box.SetAsBox( ((float)(BLOCK_DIM))/(2.0f*convF), ((float)(BLOCK_DIM))/(2.0f*convF) );
 	fixDef.shape = &box;
 	fixDef.restitution = 0.0f;
 	fixDef.density = 1;
 	m_bBody->CreateFixture( &fixDef );
+	m_bBody->SetUserData(this);
 }
 
 
@@ -51,6 +55,13 @@ void Player::AddForceToBody(b2Vec2& force)
 {
 	m_sState->AddForceToBody(force);
 }
+
+void Player::Die(void)
+{
+	m_bBody->SetTransform(initPoint, 0);
+	m_bBody->SetLinearVelocity(b2Vec2(0,0));
+}
+
 
 void Player::SwitchState(State* s)
 {

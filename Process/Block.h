@@ -13,6 +13,7 @@ public:
 
 	void SetSurface(const int surface_index);
 	void SetBody( b2BodyDef &bodyDef );
+	void Die(void) {};
 
 	b2Body* GetBody(void);
 

@@ -8,8 +8,10 @@
 #include "Process/CProcess.h"
 #include "Process/Player.h"
 #include "Process/Block.h"
+#include "Process/Spike.h"
 #include "Process/ProcessManager.h"
 #include "GameCache.h"
+#include "MyContactListener.h"
 #include "EventManager.h"
 #include <Box2D\Box2D.h>
 #include <iostream>
@@ -94,7 +96,8 @@ bool InitEnv( void )
 
 	PMan->Attach(sp);
 
-	
+	bWorld->SetContactFilter(new b2ContactFilter());
+	bWorld->SetContactListener(new MyContactListener());
 
 	return true;
 }
@@ -196,4 +199,8 @@ void InitLevel( void )
 
 		++i;
 	}
+
+	Spike* s = new Spike(650,600, SPIKE_UP);
+	shared_ptr<Spike> ss(s);
+	PMan->Attach(ss);
 }
