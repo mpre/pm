@@ -26,6 +26,8 @@ public:
 
 	void Die(void){};
 
+	bool Hurt( void ){ return true; };
+
 private:
 	Spike(void);
 	b2Body* m_bBody;

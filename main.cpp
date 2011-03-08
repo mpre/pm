@@ -194,7 +194,12 @@ void InitLevel( void )
 				shape.m_hasVertex3 = true;
 				shape.m_vertex3 = *v3;
 			}
-			ground->CreateFixture(&shape, 0.0f);
+			b2FixtureDef f;
+			f.shape = &shape;
+			f.density = 0.0f;
+			f.filter.categoryBits = 0x0016;
+			f.filter.maskBits = 0x0002;
+			ground->CreateFixture(&f);
 		}
 
 		++i;

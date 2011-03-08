@@ -7,7 +7,7 @@ Spike::Spike(float xPosition, float yPosition,
 	b2BodyDef def;
 	def.type = b2_staticBody;
 	def.position.Set( xPosition/convF, yPosition/convF );
-	def.awake = true;
+	def.awake = false;
 	SetBody(def);
 }
 
@@ -34,9 +34,9 @@ void Spike::SetBody(b2BodyDef &bodyDef)
 	b2Vec2 v1,v2,v3;
 	switch(m_iDir){
 		case SPIKE_UP:
-			v1 = b2Vec2(0,0); 
-			v2 = b2Vec2(BLOCK_DIM/2, BLOCK_DIM);
-			v3 = b2Vec2(BLOCK_DIM, 0);
+			v1 = b2Vec2(0,-BLOCK_DIM/(2.0f * convF)); 
+			v2 = b2Vec2(BLOCK_DIM/(2.0f * convF),BLOCK_DIM/(2.0f * convF));
+			v3 = b2Vec2(-BLOCK_DIM/(2.0f * convF),BLOCK_DIM/(2.0f * convF));
 			m_sImg = GCache->GetSurface(SPIKE_UP);
 			break;
 		case SPIKE_DOWN:
@@ -61,12 +61,29 @@ void Spike::SetBody(b2BodyDef &bodyDef)
 	b2Vec2 v[3] = {v1,v2,v3};
 	triangle.Set(v, 3);
 
+	/*b2PolygonShape triangle;
+	triangle.SetAsBox( ((float)(BLOCK_DIM))/(2.0f*convF), ((float)(BLOCK_DIM))/(2.0f*convF));
+	switch(m_iDir){
+		case SPIKE_UP:
+			m_sImg = GCache->GetSurface(PSPIKE_UP);
+			break;
+		case SPIKE_DOWN:
+			m_sImg = GCache->GetSurface(PSPIKE_DOWN);
+			break;
+		case SPIKE_RIGHT:
+			m_sImg = GCache->GetSurface(PSPIKE_RIGHT);
+			break;
+		case SPIKE_LEFT:
+			m_sImg = GCache->GetSurface(PSPIKE_LEFT);
+			break;
+	}*/
 	fixDef.shape = &triangle;
 	fixDef.restitution = 0.0f;
 	fixDef.friction = 1.0f;
-	fixDef.density = 5;
+	fixDef.density = 0.0f;
 
 	fixDef.filter.maskBits = 0x0002; // Collide solo con i giocatori
+	fixDef.filter.categoryBits = 0x0016;
 
 	m_bBody->CreateFixture(&fixDef);
 	m_bBody->SetUserData(this);

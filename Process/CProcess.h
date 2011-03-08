@@ -23,6 +23,7 @@ public:
 	virtual void Update(void);
 	virtual void SetSurface(const int surface_index)=0;
 	virtual void Die(void)=0;
+	virtual bool Hurt(void){ return false; };
 	bool IsDead(void){ return m_bDead; };
 
 protected:

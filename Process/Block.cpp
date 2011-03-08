@@ -30,6 +30,8 @@ void Block::SetBody( b2BodyDef &bodyDef )
 	fixDef.density = 10;
 	// Problema mappe tiled. Questo valore viene filtrato da player
 	fixDef.filter.categoryBits = 0x0004;
+	fixDef.filter.maskBits = 0x0002;
+
 	m_bBody->CreateFixture( &fixDef );
 	m_bBody->SetUserData(this);
 }

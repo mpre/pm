@@ -16,6 +16,7 @@ class Player :
 	friend class StandingState;
 	friend class RunningState;
 	friend class JumpingState;
+	friend class DieState;
 
 public:
 	Player( float, float );
@@ -91,6 +92,17 @@ class JumpingState:
 public:
 	JumpingState(Player*);
 	~JumpingState(void) {};
+
+	void Update();
+	void AddForceToBody(b2Vec2& force);
+};
+
+class DieState:
+	public State
+{
+public:
+	DieState(Player*);
+	~DieState(void) {};
 
 	void Update();
 	void AddForceToBody(b2Vec2& force);

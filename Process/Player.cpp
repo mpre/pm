@@ -33,7 +33,7 @@ void Player::SetBody( b2BodyDef &bodyDef )
 	b2FixtureDef fixDef;
 	b2PolygonShape box;
 	// Evito di fare collisioni tra player e blocci per il problema delle mappe tiled
-	fixDef.filter.maskBits = 0xFFFF & ~0x0004;
+	fixDef.filter.maskBits = 0x0008 | 0x0016;
 	fixDef.filter.categoryBits = 0x0002;
 
 	box.SetAsBox( ((float)(BLOCK_DIM))/(2.0f*convF), ((float)(BLOCK_DIM))/(2.0f*convF) );
@@ -58,8 +58,7 @@ void Player::AddForceToBody(b2Vec2& force)
 
 void Player::Die(void)
 {
-	m_bBody->SetTransform(initPoint, 0);
-	m_bBody->SetLinearVelocity(b2Vec2(0,0));
+	this->SwitchState(new DieState(this));
 }
 
 
@@ -239,4 +238,36 @@ void JumpingState::AddForceToBody(b2Vec2& force)
 			b2Vec2 (MAX_SPEED * v / abs(v), 
 			m_pPlayer->m_bBody->GetLinearVelocity().y ));
 	}
+}
+
+/* Die state*/
+DieState::DieState(Player* p) : State(p)
+{
+	 m_pPlayer->temp_i = (m_pPlayer->m_bBody->GetLinearVelocity().x >= 0) ? 3 : 0;
+}
+
+void DieState::Update()
+{
+	if(!bWorld->IsLocked())
+		m_pPlayer->m_bBody->SetTransform(m_pPlayer->initPoint, 0);
+	m_pPlayer->m_bBody->SetLinearVelocity(b2Vec2(0,0));
+
+	SDL_Rect pos;
+	pos.x = m_pPlayer->m_bBody->GetPosition().x * convF;
+	pos.y = m_pPlayer->m_bBody->GetPosition().y * convF;
+	
+	SDL_Rect clip;
+	clip.w = BLOCK_DIM;
+	clip.h = BLOCK_DIM;
+
+	clip.x = BLOCK_DIM * m_pPlayer->temp_i;
+	clip.y = BLOCK_DIM;
+
+	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
+	
+	m_pPlayer->SwitchState(new StandingState(m_pPlayer));
+}
+
+void DieState::AddForceToBody(b2Vec2& force)
+{
 }
