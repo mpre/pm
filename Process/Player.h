@@ -95,6 +95,8 @@ public:
 
 	void Update();
 	void AddForceToBody(b2Vec2& force);
+private:
+	short int otherJumps; // Numero di altri salti ammessi (utile per salto doppio)
 };
 
 class DieState:

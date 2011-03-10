@@ -185,6 +185,7 @@ void RunningState::AddForceToBody(b2Vec2& force)
 JumpingState::JumpingState(Player* p) : State(p)
 {
 	 m_pPlayer->temp_i = (m_pPlayer->m_bBody->GetLinearVelocity().x >= 0) ? 3 : 0;
+	 otherJumps = 1;
 }
 
 void JumpingState::Update()
@@ -229,7 +230,13 @@ void JumpingState::Update()
 
 void JumpingState::AddForceToBody(b2Vec2& force)
 {
-	force.y = 0;
+	if(force.y != 0)
+	{
+		if(otherJumps > 0)
+			--otherJumps;
+		else
+			force.y = 0;
+	}
 	m_pPlayer->m_bBody->ApplyForce(force, m_pPlayer->m_bBody->GetWorldCenter());
 	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) > MAX_SPEED)
 	{

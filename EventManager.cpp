@@ -20,8 +20,25 @@ void EventManager::ManageEvent(void)
 		switch(ev.type)
 		{
 		case SDL_KEYDOWN:
-			m_bPressed[ev.key.keysym.sym] = true;
-			break;
+			{
+				switch(ev.key.keysym.sym)
+				{
+				case PLAYER1_UP:
+					if( !m_bPressed[PLAYER1_UP] )
+						players[0]->AddForceToBody(b2Vec2(0,-350));
+					break;
+
+				case PLAYER1_DOWN:
+					if( !m_bPressed[PLAYER1_DOWN] )
+						players[0]->AddForceToBody(b2Vec2(0,30));
+					break;
+
+				default:
+					break;
+				}
+				m_bPressed[ev.key.keysym.sym] = true;
+				break;
+			}
 		case SDL_KEYUP:
 			m_bPressed[ev.key.keysym.sym] = false;
 			break;
@@ -29,12 +46,11 @@ void EventManager::ManageEvent(void)
 			run = false;
 			break;
 		}
-	}
+	}	
 
-	if( m_bPressed[PLAYER1_UP] )
-		players[0]->AddForceToBody(b2Vec2(0,-500));
-	if( m_bPressed[PLAYER1_DOWN] )
-		players[0]->AddForceToBody(b2Vec2(0,30));
+	/* Controllo tutte le direzioni, in questo modo se vengono schicciati
+		sia sx che dx il giocatore ha un vettore di movimento orizzontale 
+		pari a 0 aggiungendo due forze pari e contrarie*/
 	if( m_bPressed[PLAYER1_LEFT] )
 		players[0]->AddForceToBody(b2Vec2(-30,0));
 	if( m_bPressed[PLAYER1_RIGHT] )

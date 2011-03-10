@@ -13,9 +13,12 @@
 #include "GameCache.h"
 #include "MyContactListener.h"
 #include "EventManager.h"
+
 #include <Box2D\Box2D.h>
 #include <iostream>
 #include <vector>
+
+#include <Windows.h>
 
 using namespace std;
 
@@ -48,6 +51,10 @@ bool run = true;
 
 int main( int argc, char* args[] )
 {
+	AllocConsole();
+
+	std::cout<<"Hello world";
+
 	if(!InitEnv())
 		return 0;
 	
@@ -60,6 +67,7 @@ int main( int argc, char* args[] )
 	
 	EndEnv();
 	_CrtDumpMemoryLeaks();
+	FreeConsole();
     return true;    
 }
 
