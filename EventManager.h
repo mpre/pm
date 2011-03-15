@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <map>
 #include <vector>
 #include "Process\Player.h"
 #include "KEYSETTINGS.h"
@@ -18,6 +19,6 @@ public:
 	void ManageEvent(void);
 
 private:
-	map<int, bool> m_bPressed; // 133 è la dimension dell'enum
+	map<int, bool> m_bPressed; 
 };
 

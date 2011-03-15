@@ -8,6 +8,7 @@ ProcessManager::ProcessManager(void)
 
 ProcessManager::~ProcessManager(void)
 {
+	m_pList.clear();
 }
 
 

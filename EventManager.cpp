@@ -32,6 +32,16 @@ void EventManager::ManageEvent(void)
 					if( !m_bPressed[PLAYER1_DOWN] )
 						players[0]->AddForceToBody(b2Vec2(0,30));
 					break;
+				
+				case PLAYER2_UP:
+					if( !m_bPressed[PLAYER1_UP] )
+						players[1]->AddForceToBody(b2Vec2(0,-350));
+					break;
+
+				case PLAYER2_DOWN:
+					if( !m_bPressed[PLAYER1_DOWN] )
+						players[1]->AddForceToBody(b2Vec2(0,30));
+					break;
 
 				default:
 					break;
@@ -55,6 +65,10 @@ void EventManager::ManageEvent(void)
 		players[0]->AddForceToBody(b2Vec2(-30,0));
 	if( m_bPressed[PLAYER1_RIGHT] )
 		players[0]->AddForceToBody(b2Vec2(30,0));
+	if( m_bPressed[PLAYER2_LEFT] )
+		players[1]->AddForceToBody(b2Vec2(-30,0));
+	if( m_bPressed[PLAYER2_RIGHT] )
+		players[1]->AddForceToBody(b2Vec2(30,0));
 
 	if( m_bPressed[SDLK_ESCAPE] )
 		run = false;

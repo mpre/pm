@@ -14,6 +14,13 @@ extern const float convF;
 
 extern GameCache* GCache;
 
+enum imgDirections{
+		IRIGHT, 
+		ILEFT,
+		IUP,
+		IDOWN
+};
+
 class CProcess
 {
 public:	
@@ -24,7 +31,9 @@ public:
 	virtual void SetSurface(const int surface_index)=0;
 	virtual void Die(void)=0;
 	virtual bool Hurt(void){ return false; };
+	virtual void Touched(void) { };
 	bool IsDead(void){ return m_bDead; };
+	void SetDead(bool dead){ m_bDead = dead; };
 
 protected:
 	bool m_bDead;

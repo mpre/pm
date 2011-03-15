@@ -1,7 +1,13 @@
 /* MEMORY LEAK LIB */
+#if defined( _MSC_VER ) && !defined( NDEBUG )
+// Visual Studio only; make sure we're debugging
+#define MEMORY_LEAK_DETECTION
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#define new DEBUG_NEW
+#define DEBUG_NEW new( _NORMAL_BLOCK, __FILE__, __LINE__ )
+#endif
 
 #include "SDL.h"
 #include <SDL_image.h>
@@ -9,6 +15,9 @@
 #include "Process/Player.h"
 #include "Process/Block.h"
 #include "Process/Spike.h"
+#include "Process/SpikeButton.h"
+#include "Process/FlareTower.h"
+#include "Process/Flares.h"
 #include "Process/ProcessManager.h"
 #include "GameCache.h"
 #include "MyContactListener.h"
@@ -51,12 +60,12 @@ bool run = true;
 
 int main( int argc, char* args[] )
 {
+#ifdef _DEBUG
 	AllocConsole();
-
-	std::cout<<"Hello world";
+#endif
 
 	if(!InitEnv())
-		return 0;
+		return 1;
 	
 	if(InitProcess())
 	{
@@ -66,9 +75,14 @@ int main( int argc, char* args[] )
 	EndProcess();	
 	
 	EndEnv();
-	_CrtDumpMemoryLeaks();
+
+#ifdef _DEBUG
+	if(_CrtDumpMemoryLeaks())
+		std::cout<<"Memory Leak";
 	FreeConsole();
-    return true;    
+#endif
+
+    return 0;    
 }
 
 bool InitEnv( void )
@@ -80,6 +94,13 @@ bool InitEnv( void )
 		return false;
 
 	IMG_Init(IMG_INIT_PNG|IMG_INIT_JPG|IMG_INIT_TIF);
+
+#ifdef _DEBUG
+	// Hack per aggirare la mancanza di console quando 
+	// si compilano progetti SDL
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stderr );
+#endif
 
 	PMan = new ProcessManager();
 	GCache = new GameCache();
@@ -93,17 +114,25 @@ bool InitEnv( void )
 	InitLevel();
 	
 
-	Player*	x = new Player(8.0f, 12.0f);
+	Player*	x = new Player(8.0f, 14.0f);
 	x->SetSurface(PPLAYER);
 
 	players.push_back(x);
 
 	shared_ptr<Player> sp(x);
 
-	
-
 	PMan->Attach(sp);
 
+	Player* y =new Player(18.0f, 14.0f);
+	y->SetSurface(PPLAYER2);
+
+	players.push_back(y);
+
+	shared_ptr<Player> sp2(y);
+
+	PMan->Attach(sp2);
+
+	
 	bWorld->SetContactFilter(new b2ContactFilter());
 	bWorld->SetContactListener(new MyContactListener());
 
@@ -112,18 +141,21 @@ bool InitEnv( void )
 
 void EndEnv( void )
 {
+		
+	delete EvMan;
+
+	
+	delete PMan;
+	
+
 	b2Body* node = bWorld->GetBodyList();
 	while(node)
 	{
 		bWorld->DestroyBody(node);
 		node = bWorld->GetBodyList();
 	}
-	
-	delete EvMan;
 
-	delete PMan;
 	//delete GCache;
-
 	delete bWorld;
 	SDL_FreeSurface(screen);
 	IMG_Quit();
@@ -139,7 +171,9 @@ void RunProcess( void )
 {
 	ProcessManager* x124=PMan;
 
-	SDL_Surface* background = SDL_LoadBMP("img/background.bmp");
+	SDL_Surface* background = IMG_Load("img/background2.png");
+	background = SDL_DisplayFormat(background);
+
 	while(run)
 	{
 		EvMan->ManageEvent();
@@ -147,7 +181,7 @@ void RunProcess( void )
 		SDL_BlitSurface(background, NULL, screen, NULL);
 		bWorld->Step(1.0f / 60.0f, 15, 14);
 		PMan->Update();
-		SDL_Delay(5);
+		SDL_Delay(15);
 		SDL_Flip(screen);
 	}
 }
@@ -184,6 +218,7 @@ void InitLevel( void )
 
 	while(i!=end)
 	{
+		delete v0;
 		v0 = v1;
 		v1 = v2;
 		v2 = v3;
@@ -213,7 +248,32 @@ void InitLevel( void )
 		++i;
 	}
 
-	Spike* s = new Spike(650,600, SPIKE_LEFT);
+	Spike* s = new Spike(650,SCREEN_HEIGHT-BLOCK_DIM*2, IUP);
 	shared_ptr<Spike> ss(s);
 	PMan->Attach(ss);
+	Spike* sa = new Spike(690,SCREEN_HEIGHT-BLOCK_DIM*2, IUP);
+	shared_ptr<Spike> ssa(sa);
+	PMan->Attach(ssa);
+
+	SpikeButton* sb2 = new SpikeButton(
+		b2Vec2(100, 700),
+		b2Vec2(710,SCREEN_HEIGHT-BLOCK_DIM*2),
+		IUP);
+	shared_ptr<SpikeButton> ss2(sb2);
+	PMan->Attach(ss2);
+
+	FlareTower* sf = new FlareTower(b2Vec2(750, SCREEN_HEIGHT-BLOCK_DIM*2),
+		IUP);
+	shared_ptr<FlareTower> ssf(sf);
+	PMan->Attach(ssf);
+
+	Flares* sff = new Flares(b2Vec2(750, SCREEN_HEIGHT-BLOCK_DIM*4),
+		IUP);
+	shared_ptr<Flares> ssff(sff);
+	PMan->Attach(ssff);
+
+	delete v3;
+	delete v2;
+	delete v1;
+	delete v0;
 }

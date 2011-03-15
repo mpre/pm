@@ -8,27 +8,29 @@ GameCache::GameCache(void)
 
 GameCache::~GameCache(void)
 {
-	/*SurfaceList::iterator i = m_sList.begin();
+	SurfaceList::iterator i = m_sList.begin();
 	SurfaceList::iterator end = m_sList.end();
 
 	while(i!=end)
 	{
 		SDL_FreeSurface(i->second.get());
 		++i;
-	}*/
-
-	m_sList.clear();
+	}
 }
 
 
 void GameCache::Init(void)
 {
 	loadOptimized( "img/player2.png", PPLAYER );
+	loadOptimized( "img/player3.png", PPLAYER2 );
 	loadOptimized( "img/terrain_tile.png", TERRAIN_TILE );
 	loadOptimized( "img/spike.png", PSPIKE_UP);
 	loadOptimized( "img/spikedown.png", PSPIKE_DOWN);
 	loadOptimized( "img/spikeleft.png", PSPIKE_LEFT);
 	loadOptimized( "img/spikeright.png", PSPIKE_RIGHT);
+	loadOptimized( "img/spikebutton.png", SPIKEBUTTON);
+	loadOptimized( "img/flaretower.png", FLARETOWER);
+	loadOptimized( "img/flares.png", FLARES);
 }
 
 bool GameCache::loadOptimized(string path, int position)

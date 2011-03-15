@@ -14,11 +14,15 @@ typedef map< int, Surface_ptr > SurfaceList;
 /* Enumeratore utile per gestire le posizioni all'interno della lista */
 enum loaded_image_index{
 	PPLAYER,
+	PPLAYER2,
 	TERRAIN_TILE,
 	PSPIKE_UP,
 	PSPIKE_DOWN,
 	PSPIKE_LEFT,
-	PSPIKE_RIGHT
+	PSPIKE_RIGHT,
+	SPIKEBUTTON,
+	FLARETOWER,
+	FLARES
 };
 
 class GameCache

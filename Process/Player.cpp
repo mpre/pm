@@ -16,7 +16,11 @@ Player::Player(float xPosition=0.0f, float yPosition=0.0f) : CProcess(), temp_i(
 
 Player::~Player(void)
 {
-	bWorld->DestroyBody(m_bBody);
+	/*if (m_bBody)
+		bWorld->DestroyBody(m_bBody);*/
+	m_bBody = 0;
+	delete m_sState;
+	m_sState = 0;
 }
 
 

@@ -31,6 +31,7 @@ public:
 
 	void SwitchState(State*);
 
+
 protected:
 	Player(void);
 	b2Vec2 initPoint;

@@ -1,13 +1,6 @@
 #pragma once
 #include "CProcess.h"
 
-enum spikeDirections{
-		SPIKE_RIGHT, 
-		SPIKE_LEFT,
-		SPIKE_UP,
-		SPIKE_DOWN
-};
-
 class Spike :
 	public CProcess
 {
