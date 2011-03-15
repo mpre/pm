@@ -31,7 +31,7 @@ public:
 	virtual void SetSurface(const int surface_index)=0;
 	virtual void Die(void)=0;
 	virtual bool Hurt(void){ return false; };
-	virtual void Touched(void) { };
+	virtual void Touched(bool touch=true) { };
 	bool IsDead(void){ return m_bDead; };
 	void SetDead(bool dead){ m_bDead = dead; };
 

@@ -20,6 +20,6 @@ public:
 private:
 	Block(void);
 	b2Body* m_bBody;
-	Surface_ptr m_sImg;
+	SDL_Surface* m_sImg;
 };
 

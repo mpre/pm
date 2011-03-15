@@ -108,7 +108,7 @@ void StandingState::Update()
 	clip.x = BLOCK_DIM * m_pPlayer->temp_i;
 	clip.y = BLOCK_DIM;
 
-	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
+	SDL_BlitSurface(m_pPlayer->m_sImg, &clip, screen, &pos);
 }
 
 void StandingState::AddForceToBody(b2Vec2& force)
@@ -152,7 +152,7 @@ void RunningState::Update()
 	clip.x = BLOCK_DIM * m_pPlayer->temp_i;
 	clip.y = 0;
 
-	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
+	SDL_BlitSurface(m_pPlayer->m_sImg, &clip, screen, &pos);
 
 	if(abs(m_pPlayer->m_bBody->GetLinearVelocity().x) == 0.0f)
 	{
@@ -215,7 +215,7 @@ void JumpingState::Update()
 	clip.x = BLOCK_DIM * m_pPlayer->temp_i;
 	clip.y = BLOCK_DIM;
 
-	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
+	SDL_BlitSurface(m_pPlayer->m_sImg, &clip, screen, &pos);
 
 	bool standing = false;
 	for(b2ContactEdge* contatto = m_pPlayer->m_bBody->GetContactList();
@@ -274,7 +274,7 @@ void DieState::Update()
 	clip.x = BLOCK_DIM * m_pPlayer->temp_i;
 	clip.y = BLOCK_DIM;
 
-	SDL_BlitSurface(m_pPlayer->m_sImg.get(), &clip, screen, &pos);
+	SDL_BlitSurface(m_pPlayer->m_sImg, &clip, screen, &pos);
 	
 	m_pPlayer->SwitchState(new StandingState(m_pPlayer));
 }

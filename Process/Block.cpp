@@ -54,7 +54,7 @@ void Block::Update(void)
 	clip.x = 0;
 	clip.y = 0;
 
-	SDL_BlitSurface(m_sImg.get(), &clip, screen, &pos);
+	SDL_BlitSurface(m_sImg, &clip, screen, &pos);
 }
 
 

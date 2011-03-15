@@ -36,7 +36,7 @@ protected:
 	Player(void);
 	b2Vec2 initPoint;
 	b2Body* m_bBody;
-	Surface_ptr m_sImg;
+	SDL_Surface* m_sImg;
 	State* m_sState;
 	/* Ultimo millisecondo in cui è cambiata l'immagine */
 	unsigned int m_tLast_surface_change;

@@ -53,6 +53,8 @@ b2World* bWorld = NULL;
 GameCache* GCache = NULL;
 ProcessManager* PMan = NULL;
 EventManager* EvMan = NULL;
+b2ContactFilter* CFilt = NULL;
+MyContactListener* CList = NULL;
 
 std::vector<Player*> players;
 
@@ -66,14 +68,14 @@ int main( int argc, char* args[] )
 
 	if(!InitEnv())
 		return 1;
-	
+
 	if(InitProcess())
 	{
 		RunProcess();
 	}
     
 	EndProcess();	
-	
+
 	EndEnv();
 
 #ifdef _DEBUG
@@ -132,20 +134,23 @@ bool InitEnv( void )
 
 	PMan->Attach(sp2);
 
+	CFilt = new b2ContactFilter();
+	CList = new MyContactListener();
 	
-	bWorld->SetContactFilter(new b2ContactFilter());
-	bWorld->SetContactListener(new MyContactListener());
+	bWorld->SetContactFilter(CFilt);
+	bWorld->SetContactListener(CList);
 
 	return true;
 }
 
 void EndEnv( void )
 {
-		
+
 	delete EvMan;
 
 	
 	delete PMan;
+	
 	
 
 	b2Body* node = bWorld->GetBodyList();
@@ -155,8 +160,14 @@ void EndEnv( void )
 		node = bWorld->GetBodyList();
 	}
 
-	//delete GCache;
+	delete GCache;
 	delete bWorld;
+
+	delete CFilt;
+	CFilt = 0;
+	delete CList;
+	CList = 0;
+
 	SDL_FreeSurface(screen);
 	IMG_Quit();
 	SDL_Quit();

@@ -17,7 +17,7 @@ public:
 	void Die(void);
 	void Update(void);
 	void SetSurface(const int surface_index){};
-	void Touched(void);
+	void Touched(bool touch=true);
 
 private:
 	void SetBody(b2BodyDef &def);
@@ -28,7 +28,7 @@ private:
 	b2Vec2 _spikePos;
 	int _spikeDirection;
 	Spike* _spike;
-	Surface_ptr m_sImg;
+	SDL_Surface* m_sImg;
 
 	bool _activateSpike;
 };

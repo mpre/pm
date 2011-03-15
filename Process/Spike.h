@@ -24,7 +24,7 @@ public:
 private:
 	Spike(void);
 	b2Body* m_bBody;
-	Surface_ptr m_sImg;
+	SDL_Surface* m_sImg;
 	short int m_iDir;
 };
 

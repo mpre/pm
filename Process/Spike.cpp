@@ -85,5 +85,5 @@ void Spike::Update(void)
 	pos.x = m_bBody->GetPosition().x * convF;
 	pos.y = m_bBody->GetPosition().y * convF;
 
-	SDL_BlitSurface(m_sImg.get(), NULL, screen, &pos);
+	SDL_BlitSurface(m_sImg, NULL, screen, &pos);
 }

@@ -13,9 +13,11 @@ GameCache::~GameCache(void)
 
 	while(i!=end)
 	{
-		SDL_FreeSurface(i->second.get());
+		SDL_FreeSurface(i->second);
 		++i;
 	}
+
+	m_sList.clear();
 }
 
 
@@ -44,13 +46,11 @@ bool GameCache::loadOptimized(string path, int position)
 			SDL_FreeSurface( loadedS );
 			Uint32 colorkey = SDL_MapRGB( optimizedS->format, 0, 0xFF, 0xFF );
 			SDL_SetColorKey(optimizedS, SDL_SRCCOLORKEY, colorkey);
-			Surface_ptr img(optimizedS);
-			m_sList[position] = img;
+			m_sList[position] = optimizedS;
 		}
 		else
 		{
-			Surface_ptr img(loadedS);
-			m_sList[position] = img;
+			m_sList[position] = loadedS;
 		}
 		return true;
 	}
@@ -61,7 +61,7 @@ bool GameCache::loadOptimized(string path, int position)
 	}
 }
 
-Surface_ptr GameCache::GetSurface(const int index)
+SDL_Surface* GameCache::GetSurface(const int index)
 {
 	return m_sList[index];
 }

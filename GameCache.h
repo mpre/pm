@@ -7,9 +7,7 @@
 
 using namespace std;
 
-typedef shared_ptr< SDL_Surface > Surface_ptr;
-
-typedef map< int, Surface_ptr > SurfaceList;
+typedef map< int, SDL_Surface* > SurfaceList;
 
 /* Enumeratore utile per gestire le posizioni all'interno della lista */
 enum loaded_image_index{
@@ -29,11 +27,11 @@ class GameCache
 {
 public:
 	GameCache(void);
-	~GameCache(void);
+	virtual ~GameCache(void);
 
 	void Init(void);
 
-	Surface_ptr GetSurface(const int index);
+	SDL_Surface* GetSurface(const int index);
 
 private:
 	/* Trattiamo un singleton, non è possibile chiamarne il costruttore */
